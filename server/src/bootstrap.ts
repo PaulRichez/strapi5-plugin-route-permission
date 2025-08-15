@@ -50,6 +50,7 @@ export default async ({ strapi }: StrapiContext) => {
               strapi.log.info(`Generating permission on role ${role} ::::: ${route.perm_action}`);
               counterPermUpdated++;
               
+              // Create the route permission entry in our plugin's table
               await strapi.entityService.create('plugin::strapi5-plugin-route-permission.route-permission', {
                 data: {
                   action: route.perm_action,
@@ -57,6 +58,7 @@ export default async ({ strapi }: StrapiContext) => {
                 },
               });
               
+              // Create the users-permissions permission entry
               return await strapi.entityService.create('plugin::users-permissions.permission', {
                 data: {
                   action: route.perm_action,

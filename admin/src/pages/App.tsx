@@ -1,15 +1,17 @@
-import { Page } from '@strapi/strapi/admin';
 import { Routes, Route } from 'react-router-dom';
-
+import { Page } from '@strapi/strapi/admin';
+import { PLUGIN_ID } from '../pluginId';
 import { HomePage } from './HomePage';
 
-const App = () => {
+export const App = () => {
   return (
-    <Routes>
-      <Route index element={<HomePage />} />
-      <Route path="*" element={<Page.Error />} />
-    </Routes>
+    <Page.Main>
+      <Routes>
+        <Route index element={<HomePage />} />
+        <Route path="*" element={<div>Page not found</div>} />
+      </Routes>
+    </Page.Main>
   );
 };
 
-export { App };
+export default App;

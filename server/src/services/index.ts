@@ -1,6 +1,7 @@
-import service from './service';
 import routes from './routes';
+import routesPermissions from './routes-permissions';
+
 export default {
-  service,
   routes,
+  'routes-permissions': routesPermissions,
 };

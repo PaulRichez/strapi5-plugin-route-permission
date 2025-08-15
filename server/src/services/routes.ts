@@ -1,5 +1,4 @@
 'use strict';
-import * as _ from 'lodash';
 import type { Core } from '@strapi/strapi';
 
 interface RouteConfig {
@@ -35,7 +34,7 @@ interface TransformedRoute {
 }
 
 const transformRoute = (route: Route, type: string, name: string): TransformedRoute => {
-  let [controller, action] = _.get(route, "handler").split(".");
+  let [controller, action] = route.handler.split(".");
   if (route.handler.includes('::')) {
     // for config on core route
     controller = route.handler.split('::')[1].split('.')[1];

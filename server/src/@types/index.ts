@@ -26,3 +26,11 @@ export interface TransformedRoute {
   perm_action: string;
   roles: string[];
 }
+
+export interface RoutePermissionsService {
+  deleteConfiguredRoutesHistory(): Promise<void>;
+}
+
+export interface RoutesService {
+  getRoutesWithRolesConfigured(): TransformedRoute[];
+}
