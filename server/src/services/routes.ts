@@ -55,21 +55,21 @@ const transformRoute = (route: Route, type: string, name: string): TransformedRo
 export default ({ strapi }: { strapi: Core.Strapi }) => {
   
   const processRoutes = (routesData: any, type: string, name: string, routes: TransformedRoute[]) => {
-    console.log(`Processing routes for ${type} ${name}:`, routesData);
+    // console.log(`Processing routes for ${type} ${name}:`, routesData);
     
     // In Strapi 5, routes can have different structures
     if (routesData && typeof routesData === 'object' && !Array.isArray(routesData)) {
       
       // For plugins: { 'content-api': { routes: [...] }, 'admin': { routes: [...] } }
       if (routesData['content-api'] && routesData['content-api'].routes) {
-        console.log(`Found content-api routes for ${name}:`, routesData['content-api'].routes.length, 'routes');
+        // console.log(`Found content-api routes for ${name}:`, routesData['content-api'].routes.length, 'routes');
         
         routesData['content-api'].routes.forEach((route: Route) => {
-          console.log(`Checking route:`, route);
+          // console.log(`Checking route:`, route);
           if (route?.config?.roles) {
             const result = transformRoute(route, type, name);
             routes.push(result);
-            console.log(`Added route with roles:`, result);
+            // console.log(`Added route with roles:`, result);
           }
         });
       }
@@ -79,18 +79,18 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
         // Check each property in the routes object
         for (const routeKey in routesData) {
           const routeGroup = routesData[routeKey];
-          console.log(`Checking route group ${routeKey}:`, routeGroup);
+          // console.log(`Checking route group ${routeKey}:`, routeGroup);
           
           // Only process content-api routes
           if (routeGroup && routeGroup.type === 'content-api' && routeGroup.routes) {
-            console.log(`Found content-api routes in ${routeKey} for ${name}:`, routeGroup.routes.length, 'routes');
+            // console.log(`Found content-api routes in ${routeKey} for ${name}:`, routeGroup.routes.length, 'routes');
             
             routeGroup.routes.forEach((route: Route) => {
-              console.log(`Checking route:`, route);
+              // console.log(`Checking route:`, route);
               if (route?.config?.roles) {
                 const result = transformRoute(route, type, name);
                 routes.push(result);
-                console.log(`Added route with roles:`, result);
+                // console.log(`Added route with roles:`, result);
               }
             });
           }
@@ -158,8 +158,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
         }
       }
 
-      console.log('=== END DEBUG ===');
-      console.log('Total routes found with roles:', routes.length);
+      // console.log('=== END DEBUG ===');
+      // console.log('Total routes found with roles:', routes.length);
       return routes;
     }
   };

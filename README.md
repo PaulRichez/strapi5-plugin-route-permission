@@ -2,10 +2,13 @@
 
 Inspired from [strapi-plugin-route-permission](https://github.com/andreciornavei/strapi-plugin-route-permission), same plugin but for strapi V3.
 
+For strapi v4 : [strapi4-plugin-route-permission](https://github.com/PaulRichez/strapi4-plugin-route-permission)
+
+
 A plugin for [Strapi](https://github.com/strapi/strapi) that provides the ability to config roles on server route for generate permissions.
 
-[![Downloads](https://img.shields.io/npm/dm/strapi-plugin-server-route-permission?style=for-the-badge)](https://www.npmjs.com/package/strapi-plugin-server-route-permission)
-[![Install size](https://img.shields.io/npm/l/strapi-plugin-server-route-permission?style=for-the-badge)](https://github.com/PaulRichez/strapi5-plugin-route-permission/blob/main/Licence)
+[![Downloads](https://img.shields.io/npm/dm/strapi5-plugin-server-route-permission?style=for-the-badge)](https://www.npmjs.com/package/strapi5-plugin-server-route-permission)
+[![Install size](https://img.shields.io/npm/l/strapi5-plugin-server-route-permission?style=for-the-badge)](https://github.com/PaulRichez/strapi5-plugin-route-permission/blob/main/Licence)
 
 ## 🚀 &nbsp; _Overview_
 
@@ -20,13 +23,13 @@ This plugin implements a simple way to seed strapi users-permissions from routes
 With npm:
 
 ```bash
-npm install strapi-plugin-server-route-permission
+npm install strapi5-plugin-server-route-permission
 ```
 
 With yarn:
 
 ```bash
-yarn add strapi-plugin-server-route-permission
+yarn add strapi5-plugin-server-route-permission
 ```
 
 ---
@@ -42,38 +45,25 @@ Core route example :
 ```js
 "use strict";
 
-"use strict";
-
 /**
- * restaurant router
+ * subscriber router
  */
 
-const { createCoreRouter } = require("@strapi/strapi").factories;
+import { factories } from '@strapi/strapi';
 
-module.exports = createCoreRouter("api::restaurant.restaurant", {
-  config: {
-    find: {
-      // @ts-ignore
-      roles: ["authenticated", "public"],
+export default factories.createCoreRouter('api::subscriber.subscriber', {
+    config: {
+        create: {
+            // @ts-ignore
+            roles: ['public']
+        },
+        find: {
+            // @ts-ignore
+            roles: ['public']
+        },
     },
-    create: {
-      // @ts-ignore
-      roles: ["authenticated"],
-    },
-    findOne: {
-      // @ts-ignore
-      roles: ["authenticated", "public", "test"],
-    },
-    update: {
-      // @ts-ignore
-      roles: ["authenticated"],
-    },
-    delete: {
-      // @ts-ignore
-      roles: ["authenticated"],
-    },
-  },
 });
+
 ```
 
 custom route :
@@ -121,8 +111,6 @@ module.exports = {
   ],
 };
 ```
-
-If you need for users-permissions plugin click [here](https://github.com/PaulRichez/strapi5-plugin-route-permission/tree/main/examples/plugin-users-permissions)
 
 ## 🎉 &nbsp; _Result_
 

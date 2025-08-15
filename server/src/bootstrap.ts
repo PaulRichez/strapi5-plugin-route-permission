@@ -3,7 +3,6 @@ import { StrapiContext, Role, RoutePermission, TransformedRoute } from './@types
 export default async ({ strapi }: StrapiContext) => {
   
   try {
-    strapi.log.info(strapi.api)
     // Check if users-permissions plugin is available
     if (Object.keys(strapi.plugins).indexOf('users-permissions') === -1) {
       strapi.log.error('In order to make the route-permission plugin work the users-permissions plugin is required');
@@ -19,14 +18,14 @@ export default async ({ strapi }: StrapiContext) => {
 
     // get Routes with roles on config
     const routes: TransformedRoute[] = routeService.getRoutesWithRolesConfigured();
-    strapi.log.info(`Found ${routes.length} routes with roles configured`);
+    // strapi.log.info(`Found ${routes.length} routes with roles configured`);
     
     // get Roles with permissions
     const roles = await strapi.entityService.findMany('plugin::users-permissions.role', { 
       populate: ['permissions'] 
     }) as Role[];
     
-    strapi.log.info(`Found ${roles.length} roles`);
+    // strapi.log.info(`Found ${roles.length} roles`);
     
     // get routes in db
     const prevsRouteConfig = await strapi.entityService.findMany('plugin::strapi5-plugin-route-permission.route-permission', { 
