@@ -66,51 +66,7 @@ export default factories.createCoreRouter('api::subscriber.subscriber', {
 
 ```
 
-custom route :
 
-```js
-// server/routes/task.js
-"use strict";
-
-/**
- *  router.
- */
-
-module.exports = {
-  type: "content-api",
-  routes: [
-    {
-      method: "POST",
-      path: "/user/update-avatar",
-      handler: "user.updateAvatar",
-      config: {
-        // @ts-ignore
-        roles: ["authenticated"],
-        policies: [],
-        middlewares: [],
-      },
-    },
-    {
-      method: "DELETE",
-      path: "/user/delete-avatar",
-      handler: "user.deleteAvatar",
-      config: {
-        // @ts-ignore
-        roles: ["authenticated"],
-      },
-    },
-    {
-      method: "GET",
-      path: "/avatar/:id",
-      handler: "avatar.getAvatar",
-      config: {
-        // @ts-ignore
-        roles: ["authenticated"],
-      },
-    },
-  ],
-};
-```
 
 ## 🎉 &nbsp; _Result_
 
@@ -122,13 +78,9 @@ On strapi startup it add only new permission configured in your route config
 Configurated routes are visible on admin panel :
 ![](./docs/admin.png)
 
-if admin remove a permission from admin panel, you got the log and the route is'nt configured
-![](./docs/result_removed_by_admin.png)
-![](./docs/role_deleted_admin.png)
 
 You can restore via settings on admin panel, this remove the configured routes history and reconfigure route which was deleted from the admin on next restart
 ![](./docs/settings.png)
-![](./docs/restart_after_restore.png)
 
 ## 🐛 &nbsp; _Bugs_
 
@@ -136,5 +88,4 @@ If any bugs are found please report them as a [Github Issue](https://github.com/
 
 ### Typescript support problem
 
-[Issue](https://github.com/PaulRichez/strapi5-plugin-route-permission/issues/7)
 You can put this line upside the role propertie : // @ts-ignore
