@@ -64,6 +64,8 @@ export default async ({ strapi }: StrapiContext) => {
                 },
               });
             }
+          } else {
+            strapi.log.info(`Permission on role ${role} ::::: ${route.perm_action} already exists`);
           }
         }
         return null;
