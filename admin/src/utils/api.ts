@@ -9,7 +9,7 @@ interface QueryParams {
 interface RoutePermission {
   permission: string;
   role: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'role-not-found';
 }
 
 interface ApiResponse {

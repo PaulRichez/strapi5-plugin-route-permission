@@ -68,6 +68,19 @@ export default async ({ strapi }: StrapiContext) => {
             }
           } else {
             strapi.log.info(`Permission on role ${role} ::::: ${route.perm_action} already exists`);
+            
+            // Check if this permission exists in our plugin's database
+            if (!prevsRouteConfig.find(r => r.action === route.perm_action && r.role?.id === selectedRole.id)) {
+              strapi.log.info(`Adding existing permission to plugin database: ${role} ::::: ${route.perm_action}`);
+              
+              // Create the route permission entry in our plugin's table
+              await strapi.entityService.create('plugin::strapi5-plugin-route-permission.route-permission', {
+                data: {
+                  action: route.perm_action,
+                  role: selectedRole,
+                },
+              });
+            }
           }
         }
         return null;

@@ -185,7 +185,7 @@ const HomePage = () => {
         const queryString = new URLSearchParams(queryParams as any).toString();
         const response = await get(`/strapi5-plugin-route-permission/configured-routes?${queryString}`);
 
-        console.log('API Response:', response); // Debug log
+        // console.log('API Response:', response); // Debug log
 
         // useFetchClient might return the data in response.data
         setData(response.data || response);
