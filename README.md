@@ -23,7 +23,7 @@ This plugin implements a simple way to seed strapi users-permissions from routes
 - 🧹 **Cleanup Options**: Soft and hard cleanup for external permissions
 - ⚡ **Instant Operations**: Settings operations without server restart
 
-⚠️ **Note**: This plugin creates route permissions automatically on startup. It can also clean up external permissions through the admin panel, but does not automatically delete route permissions during normal operation.
+⚠️ **Note**: This plugin creates route permissions automatically on startup based on the configured bootstrap mode. It can clean up external permissions through the admin panel or during bootstrap (depending on mode), but does not automatically delete route permissions during normal operation.
 
 ---
 
