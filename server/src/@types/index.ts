@@ -22,6 +22,12 @@ export interface RoutePermission {
   };
 }
 
+export interface RoutePermissionResult {
+  permission: string;
+  role: string;
+  status: 'active' | 'inactive' | 'role-not-found' | 'external';
+}
+
 export interface TransformedRoute {
   perm_action: string;
   roles: string[];

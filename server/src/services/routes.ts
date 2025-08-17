@@ -102,7 +102,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
           if (route?.config?.roles) {
             const result = transformRoute(route, type, name);
             routes.push(result);
-            console.log(`Added route with roles:`, result);
+            // console.log(`Added route with roles:`, result);
           }
         });
       }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useFetchClient } from '@strapi/strapi/admin';
 import {
@@ -13,6 +13,7 @@ import {
   Loader,
   Button,
   Flex,
+  TextInput,
 } from '@strapi/design-system';
 import { Page } from '@strapi/strapi/admin';
 import { PLUGIN_ID } from '../pluginId';
@@ -22,7 +23,7 @@ import { getTranslation } from '../utils/getTranslation';
 interface RoutePermission {
   permission: string;
   role: string;
-  status: 'active' | 'inactive' | 'role-not-found';
+  status: 'active' | 'inactive' | 'role-not-found' | 'external';
 }
 
 // Custom Pagination Component
@@ -151,6 +152,13 @@ const StatusIcon: React.FC<{ status: string }> = ({ status }) => {
         defaultMessage: 'Role doesn\'t exist'
       });
       break;
+    case 'external':
+      backgroundColor = 'secondary500';
+      tooltipMessage = formatMessage({
+        id: getTranslation('status-icon.tooltip.status.4'),
+        defaultMessage: 'External permission (not managed by plugin)'
+      });
+      break;
   }
 
   return (
@@ -172,6 +180,16 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  
+  // Filter states
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [roleFilter, setRoleFilter] = useState('');
+  const [permissionFilter, setPermissionFilter] = useState('');
+  
+  // Applied filter states (only updated when search button is clicked)
+  const [appliedStatusFilter, setAppliedStatusFilter] = useState('all');
+  const [appliedRoleFilter, setAppliedRoleFilter] = useState('');
+  const [appliedPermissionFilter, setAppliedPermissionFilter] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -181,8 +199,17 @@ const HomePage = () => {
           sort: 'permission:ASC',
           pageSize: pageSize,
           page: currentPage,
+          status: appliedStatusFilter !== 'all' ? appliedStatusFilter : undefined,
+          role: appliedRoleFilter || undefined,
+          permission: appliedPermissionFilter || undefined,
         };
-        const queryString = new URLSearchParams(queryParams as any).toString();
+        
+        // Remove undefined values
+        const cleanParams = Object.fromEntries(
+          Object.entries(queryParams).filter(([_, value]) => value !== undefined)
+        );
+        
+        const queryString = new URLSearchParams(cleanParams as any).toString();
         const response = await get(`/strapi5-plugin-route-permission/configured-routes?${queryString}`);
 
         // console.log('API Response:', response); // Debug log
@@ -206,7 +233,28 @@ const HomePage = () => {
     };
 
     fetchData();
-  }, [get, currentPage, pageSize]);
+  }, [get, currentPage, pageSize, appliedStatusFilter, appliedRoleFilter, appliedPermissionFilter]);
+
+  const clearFilters = () => {
+    setStatusFilter('all');
+    setRoleFilter('');
+    setPermissionFilter('');
+    setAppliedStatusFilter('all');
+    setAppliedRoleFilter('');
+    setAppliedPermissionFilter('');
+    setCurrentPage(1);
+  };
+
+  const handleSearch = () => {
+    setAppliedStatusFilter(statusFilter);
+    setAppliedRoleFilter(roleFilter);
+    setAppliedPermissionFilter(permissionFilter);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  const handleFilterChange = () => {
+    setCurrentPage(1); // Reset to first page when filters change
+  };
 
   if (isLoading) {
     return (
@@ -246,6 +294,134 @@ const HomePage = () => {
             })}`}
           </Typography>
         </Box>
+        
+        {/* Filters Section */}
+        <Box marginBottom={4} padding={4} background="neutral100" hasRadius>
+          <Typography variant="delta" marginBottom={3}>
+            {formatMessage({
+              id: getTranslation('page.homePage.filters.title'),
+              defaultMessage: 'Filters'
+            })}
+          </Typography>
+          
+          <Flex gap={4} wrap="wrap">
+            {/* Status Filter */}
+            <Box minWidth="200px">
+              <Typography variant="pi" fontWeight="bold" marginBottom={1}>
+                {formatMessage({
+                  id: getTranslation('page.homePage.filters.status'),
+                  defaultMessage: 'Filter by status:'
+                })}
+              </Typography>
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  handleFilterChange();
+                }}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #dcdce4',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  backgroundColor: 'white',
+                  color: '#32324d'
+                }}
+              >
+                <option value="all">
+                  {formatMessage({
+                    id: getTranslation('page.homePage.filters.status.all'),
+                    defaultMessage: 'All statuses'
+                  })}
+                </option>
+                <option value="active">
+                  {formatMessage({
+                    id: getTranslation('page.homePage.filters.status.active'),
+                    defaultMessage: 'Active'
+                  })}
+                </option>
+                <option value="inactive">
+                  {formatMessage({
+                    id: getTranslation('page.homePage.filters.status.inactive'),
+                    defaultMessage: 'Inactive'
+                  })}
+                </option>
+                <option value="role-not-found">
+                  {formatMessage({
+                    id: getTranslation('page.homePage.filters.status.role-not-found'),
+                    defaultMessage: 'Role not found'
+                  })}
+                </option>
+                <option value="external">
+                  {formatMessage({
+                    id: getTranslation('page.homePage.filters.status.external'),
+                    defaultMessage: 'External'
+                  })}
+                </option>
+              </select>
+            </Box>
+
+            {/* Role Filter */}
+            <Box minWidth="200px">
+              <Typography variant="pi" fontWeight="bold" marginBottom={1}>
+                {formatMessage({
+                  id: getTranslation('page.homePage.filters.role'),
+                  defaultMessage: 'Filter by role:'
+                })}
+              </Typography>
+              <TextInput
+                placeholder="Enter role name..."
+                value={roleFilter}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setRoleFilter(e.target.value);
+                }}
+              />
+            </Box>
+
+            {/* Permission Filter */}
+            <Box minWidth="200px">
+              <Typography variant="pi" fontWeight="bold" marginBottom={1}>
+                {formatMessage({
+                  id: getTranslation('page.homePage.filters.permission'),
+                  defaultMessage: 'Filter by permission:'
+                })}
+              </Typography>
+              <TextInput
+                placeholder="Enter permission name..."
+                value={permissionFilter}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPermissionFilter(e.target.value);
+                }}
+              />
+            </Box>
+
+            {/* Search and Clear Buttons */}
+            <Box alignSelf="end">
+              <Flex gap={2}>
+                <Button
+                  variant="default"
+                  onClick={handleSearch}
+                >
+                  {formatMessage({
+                    id: getTranslation('page.homePage.filters.search'),
+                    defaultMessage: 'Search'
+                  })}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={clearFilters}
+                >
+                  {formatMessage({
+                    id: getTranslation('page.homePage.filters.clear'),
+                    defaultMessage: 'Clear filters'
+                  })}
+                </Button>
+              </Flex>
+            </Box>
+          </Flex>
+        </Box>
+        
         <Table colCount={3} rowCount={data?.data?.result?.length || 0}>
           <Thead>
             <Tr>

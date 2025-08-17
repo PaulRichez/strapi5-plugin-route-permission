@@ -13,7 +13,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         populate: ['role'],
       });
 
-      console.log('Route Permissions:', routePermissions); // Debug log
+      // console.log('Route Permissions:', routePermissions); // Debug log
 
       // Get all roles
       const roles = await strapi.entityService.findMany('plugin::users-permissions.role', {
@@ -48,7 +48,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       // Add routes that have role configuration but no database entry
       routes.forEach((route: any) => {
         const existsInDb = result.find(r => r.permission === route.perm_action);
-        console.log('Route:', route.perm_action, 'Exists in DB:', existsInDb);
+        // console.log('Route:', route.perm_action, 'Exists in DB:', existsInDb);
         if (!existsInDb && route.roles) {
           route.roles.forEach((role: string) => {
             // Check if the role exists
@@ -64,16 +64,74 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         }
       });
 
+      // Get all external permissions (configured in Strapi but not from plugin)
+      const allPluginActions = new Set();
+      routes.forEach((route: any) => {
+        allPluginActions.add(route.perm_action);
+      });
+      routePermissions.forEach((permission: any) => {
+        allPluginActions.add(permission.action);
+      });
+
+      // Find all permissions in users-permissions that are not from our plugin
+      roles.forEach((role: any) => {
+        if (role.permissions) {
+          role.permissions.forEach((permission: any) => {
+            // Skip if this permission is already handled by our plugin
+            if (!allPluginActions.has(permission.action)) {
+              // Check if this external permission is already in our result
+              const existsInResult = result.find(r => 
+                r.permission === permission.action && r.role === role.type
+              );
+              
+              if (!existsInResult) {
+                result.push({
+                  permission: permission.action,
+                  role: role.type,
+                  status: 'external' as any, // External permission not managed by plugin
+                });
+              }
+            }
+          });
+        }
+      });
+
+      // Handle filtering
+      const statusFilter = ctx.query.status;
+      const roleFilter = ctx.query.role;
+      const permissionFilter = ctx.query.permission;
+      
+      let filteredResult = result;
+      
+      // Apply status filter
+      if (statusFilter && statusFilter !== 'all') {
+        filteredResult = filteredResult.filter(item => item.status === statusFilter);
+      }
+      
+      // Apply role filter
+      if (roleFilter && roleFilter.trim() !== '') {
+        filteredResult = filteredResult.filter(item => 
+          item.role.toLowerCase().includes(roleFilter.toLowerCase())
+        );
+      }
+      
+      // Apply permission filter
+      if (permissionFilter && permissionFilter.trim() !== '') {
+        filteredResult = filteredResult.filter(item => 
+          item.permission.toLowerCase().includes(permissionFilter.toLowerCase())
+        );
+      }
+
       // Handle pagination
       const page = parseInt(ctx.query.page) || 1;
       const pageSize = parseInt(ctx.query.pageSize) || 10;
-      const total = result.length;
+      const total = filteredResult.length;
       const pageCount = Math.ceil(total / pageSize);
       const start = (page - 1) * pageSize;
       const end = start + pageSize;
       
-      // Apply pagination to results
-      const paginatedResult = result.slice(start, end);
+      // Apply pagination to filtered results
+      const paginatedResult = filteredResult.slice(start, end);
 
       ctx.body = {
         data: {
