@@ -186,6 +186,56 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       };
     }
   },
+
+  async cleanupSoft(ctx) {
+    try {
+      const routePermissionsService = strapi
+        .plugin('strapi5-plugin-route-permission')
+        .service('routes-permissions');
+
+      const result = await routePermissionsService.cleanupExternalPermissions('soft');
+
+      ctx.body = {
+        message: `Soft cleanup completed successfully. ${result.deletedCount} external permissions deleted, ${result.preservedCount} native permissions preserved.`,
+        success: true,
+        deletedCount: result.deletedCount,
+        preservedCount: result.preservedCount,
+      };
+    } catch (error) {
+      strapi.log.error('Error in soft cleanup:', error);
+      ctx.status = 500;
+      ctx.body = {
+        message: 'An error occurred during soft cleanup',
+        success: false,
+        error: error.message,
+      };
+    }
+  },
+
+  async cleanupHard(ctx) {
+    try {
+      const routePermissionsService = strapi
+        .plugin('strapi5-plugin-route-permission')
+        .service('routes-permissions');
+
+      const result = await routePermissionsService.cleanupExternalPermissions('hard');
+
+      ctx.body = {
+        message: `Hard cleanup completed successfully. ${result.deletedCount} external permissions deleted, ${result.preservedCount} plugin permissions preserved.`,
+        success: true,
+        deletedCount: result.deletedCount,
+        preservedCount: result.preservedCount,
+      };
+    } catch (error) {
+      strapi.log.error('Error in hard cleanup:', error);
+      ctx.status = 500;
+      ctx.body = {
+        message: 'An error occurred during hard cleanup',
+        success: false,
+        error: error.message,
+      };
+    }
+  },
 });
 
 export default controller;

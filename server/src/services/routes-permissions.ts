@@ -111,5 +111,107 @@ export default ({ strapi }: { strapi: Core.Strapi }): RoutePermissionsService =>
       strapi.log.error('Error syncing route permissions:', error);
       throw error;
     }
+  },
+
+  async cleanupExternalPermissions(mode: 'soft' | 'hard'): Promise<{ deletedCount: number; preservedCount: number }> {
+    try {
+      // Get routes configured by our plugin
+      const routeService = strapi.service('plugin::strapi5-plugin-route-permission.routes');
+      if (!routeService) {
+        throw new Error('Route permission service not found');
+      }
+
+      const routes: TransformedRoute[] = routeService.getRoutesWithRolesConfigured();
+      const routePermissions = await strapi.entityService.findMany('plugin::strapi5-plugin-route-permission.route-permission', {
+        populate: ['role'],
+      }) as unknown as RoutePermission[];
+
+      // Create set of all actions managed by our plugin
+      const pluginActions = new Set<string>();
+      routes.forEach(route => {
+        pluginActions.add(route.perm_action);
+      });
+      routePermissions.forEach(permission => {
+        pluginActions.add(permission.action);
+      });
+
+      // Define users-permissions native actions to preserve in soft mode
+      const usersPermissionsNativeActions = [
+        // User permissions
+        'plugin::users-permissions.user.create',
+        'plugin::users-permissions.user.read',
+        'plugin::users-permissions.user.update',
+        'plugin::users-permissions.user.destroy',
+        'plugin::users-permissions.user.me',
+        // Role permissions
+        'plugin::users-permissions.role.create',
+        'plugin::users-permissions.role.read',
+        'plugin::users-permissions.role.update',
+        'plugin::users-permissions.role.destroy',
+        // Auth permissions
+        'plugin::users-permissions.auth.register',
+        'plugin::users-permissions.auth.callback',
+        'plugin::users-permissions.auth.connect',
+        'plugin::users-permissions.auth.forgot-password',
+        'plugin::users-permissions.auth.reset-password',
+        'plugin::users-permissions.auth.change-password',
+        'plugin::users-permissions.auth.email-confirmation',
+        'plugin::users-permissions.auth.send-email-confirmation'
+      ];
+
+      // Get all roles with their permissions
+      const roles = await strapi.entityService.findMany('plugin::users-permissions.role', {
+        populate: ['permissions'],
+      }) as Role[];
+
+      let deletedCount = 0;
+      let preservedCount = 0;
+
+      // Process each role
+      for (const role of roles) {
+        if (role.permissions) {
+          for (const permission of role.permissions) {
+            // Skip if this permission is managed by our plugin
+            if (pluginActions.has(permission.action)) {
+              continue;
+            }
+
+            let shouldDelete = false;
+
+            if (mode === 'hard') {
+              // Hard mode: delete all external permissions
+              shouldDelete = true;
+            } else if (mode === 'soft') {
+              // Soft mode: delete only non-native permissions
+              shouldDelete = !usersPermissionsNativeActions.includes(permission.action) && 
+                            !permission.action.startsWith('plugin::content-manager.explorer.') &&
+                            !permission.action.startsWith('api::');
+            }
+
+            if (shouldDelete) {
+              try {
+                await strapi.entityService.delete('plugin::users-permissions.permission', permission.id);
+                strapi.log.info(`Deleted external permission: ${permission.action} from role ${role.type}`);
+                deletedCount++;
+              } catch (error) {
+                strapi.log.error(`Failed to delete permission ${permission.action}:`, error);
+              }
+            } else {
+              preservedCount++;
+            }
+          }
+        }
+      }
+
+      strapi.log.info(`Cleanup completed (${mode} mode): ${deletedCount} permissions deleted, ${preservedCount} preserved`);
+      
+      return {
+        deletedCount,
+        preservedCount
+      };
+    } catch (error) {
+      strapi.log.error('Error cleaning up external permissions:', error);
+      throw error;
+    }
   }
 });

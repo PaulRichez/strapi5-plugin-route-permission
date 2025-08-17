@@ -5,6 +5,7 @@ export interface StrapiContext {
 }
 
 export interface Permission {
+  id: number;
   action: string;
   role?: any;
 }
@@ -36,6 +37,7 @@ export interface TransformedRoute {
 export interface RoutePermissionsService {
   deleteConfiguredRoutesHistory(): Promise<void>;
   syncPermissions(): Promise<{ createdCount: number; syncedCount: number }>;
+  cleanupExternalPermissions(mode: 'soft' | 'hard'): Promise<{ deletedCount: number; preservedCount: number }>;
 }
 
 export interface RoutesService {

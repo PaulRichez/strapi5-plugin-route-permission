@@ -15,4 +15,20 @@ export default [
       policies: [],
     },
   },
+  {
+    method: 'POST',
+    path: '/cleanup-soft',
+    handler: 'controller.cleanupSoft',
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: 'POST',
+    path: '/cleanup-hard',
+    handler: 'controller.cleanupHard',
+    config: {
+      policies: [],
+    },
+  },
 ];
