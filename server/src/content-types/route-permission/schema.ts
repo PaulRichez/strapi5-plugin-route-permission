@@ -14,10 +14,10 @@ export default {
   },
   pluginOptions: {
     "content-manager": {
-      visible: true,
+      visible: false,
     },
     "content-type-builder": {
-      visible: true,
+      visible: false,
     },
   },
   attributes: {
