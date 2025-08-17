@@ -7,7 +7,7 @@ For strapi v4 : [strapi4-plugin-route-permission](https://github.com/PaulRichez/
 A plugin for [Strapi](https://github.com/strapi/strapi) that provides the ability to config roles on server route for generate permissions with advanced management features.
 
 [![Downloads](https://img.shields.io/npm/dm/strapi5-plugin-route-permission?style=for-the-badge)](https://www.npmjs.com/package/strapi5-plugin-route-permission)
-[![Install size](https://img.shields.io/npm/l/strapi5-plugin-route-permission?style=for-the-badge)](https://github.com/PaulRichez/strapi5-plugin-route-permission/blob/main/Licence)
+[![Install size](https://img.shields.io/npm/l/strapi5-plugin-route-permission?style=for-the-badge)](https://github.com/PaulRichez/strapi5-plugin-route-permission/blob/main/LICENSE)
 
 ## 🚀 &nbsp; _Overview_
 
@@ -225,4 +225,6 @@ Contributions, issues and feature requests are welcome!
 
 ## 📄 &nbsp; _License_
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Paul Richez
