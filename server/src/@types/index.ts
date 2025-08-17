@@ -35,6 +35,7 @@ export interface TransformedRoute {
 
 export interface RoutePermissionsService {
   deleteConfiguredRoutesHistory(): Promise<void>;
+  syncPermissions(): Promise<{ createdCount: number; syncedCount: number }>;
 }
 
 export interface RoutesService {

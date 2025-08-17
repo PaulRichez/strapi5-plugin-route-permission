@@ -160,15 +160,21 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async restore(ctx) {
     try {
-      // Call the routes-permissions service to delete history
-      await strapi
+      const routePermissionsService = strapi
         .plugin('strapi5-plugin-route-permission')
-        .service('routes-permissions')
-        .deleteConfiguredRoutesHistory();
+        .service('routes-permissions');
+
+      // Step 1: Delete existing route permissions history
+      await routePermissionsService.deleteConfiguredRoutesHistory();
+
+      // Step 2: Immediately recreate permissions using the service
+      const result = await routePermissionsService.syncPermissions();
 
       ctx.body = {
-        message: 'Route permissions history successfully deleted. Permissions will be reconfigured on next restart.',
+        message: `Route permissions have been reset successfully. ${result.createdCount} permissions created, ${result.syncedCount} permissions synced.`,
         success: true,
+        createdCount: result.createdCount,
+        syncedCount: result.syncedCount,
       };
     } catch (error) {
       strapi.log.error('Error restoring route permissions:', error);
