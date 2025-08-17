@@ -83,7 +83,6 @@ You can configure the plugin's bootstrap behavior by setting the `bootstrapMode`
 export default () => ({
   'strapi5-plugin-route-permission': {
     enabled: true,
-    resolve: './src/plugins/strapi5-plugin-route-permission',
     config: {
       bootstrapMode: 'default' // 'default' | 'restore' | 'soft' | 'hard'
     }
