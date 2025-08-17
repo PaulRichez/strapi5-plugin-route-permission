@@ -13,7 +13,6 @@ Add the configuration in your `config/plugins.js` or `config/plugins.ts` file:
 export default () => ({
   'strapi5-plugin-route-permission': {
     enabled: true,
-    resolve: './src/plugins/strapi5-plugin-route-permission',
     config: {
       bootstrapMode: 'default' // 'default' | 'restore' | 'soft' | 'hard'
     }
@@ -88,7 +87,6 @@ config: {
 export default () => ({
   'strapi5-plugin-route-permission': {
     enabled: true,
-    resolve: './src/plugins/strapi5-plugin-route-permission',
     config: {
       bootstrapMode: 'restore' // Clean slate on each restart
     }
@@ -102,7 +100,6 @@ export default () => ({
 export default () => ({
   'strapi5-plugin-route-permission': {
     enabled: true,
-    resolve: './src/plugins/strapi5-plugin-route-permission',
     config: {
       bootstrapMode: 'default' // Safe, only new permissions
     }
@@ -116,7 +113,6 @@ export default () => ({
 export default () => ({
   'strapi5-plugin-route-permission': {
     enabled: true,
-    resolve: './src/plugins/strapi5-plugin-route-permission',
     config: {
       bootstrapMode: 'soft' // Clean up external permissions
     }
