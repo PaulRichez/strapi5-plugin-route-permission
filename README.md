@@ -74,6 +74,32 @@ export default factories.createCoreRouter('api::subscriber.subscriber', {
 });
 ```
 
+### 🔧 Plugin Configuration
+
+You can configure the plugin's bootstrap behavior by setting the `bootstrapMode` in your plugin configuration:
+
+```typescript
+// config/plugins.ts
+export default () => ({
+  'strapi5-plugin-route-permission': {
+    enabled: true,
+    resolve: './src/plugins/strapi5-plugin-route-permission',
+    config: {
+      bootstrapMode: 'default' // 'default' | 'restore' | 'soft' | 'hard'
+    }
+  },
+});
+```
+
+#### Bootstrap Modes:
+
+- **`default`** (Default): Only synchronizes new permissions, preserves existing ones
+- **`restore`**: Clears plugin history and recreates all route permissions
+- **`soft`**: Removes external permissions while preserving native Strapi permissions, then syncs
+- **`hard`**: Removes ALL external permissions, keeping only plugin-managed ones (use with caution)
+
+📖 **For detailed configuration options, see [CONFIGURATION.md](./CONFIGURATION.md)**
+
 ---
 
 ## �️ &nbsp; _Admin Panel Features_
@@ -89,9 +115,9 @@ The main dashboard provides a comprehensive view of all configured routes with a
 Each route displays a status indicator with colored badges:
 
 - 🟢 **Green Badge**: Permission is properly configured and active
-- 🟡 **Yellow Badge**: Permission exists but may need attention
-- 🔴 **Red Badge**: Permission is missing or misconfigured
-- ⚪ **Gray Badge**: Permission is disabled or inactive
+- � **Red Badge**: Permission is missing or disabled
+- � **Yellow Badge**: Role doesn't exist
+- 🔵 **Blue Badge**: External permission (not managed by this plugin)
 
 #### Filtering Options
 

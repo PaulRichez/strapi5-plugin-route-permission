@@ -43,3 +43,9 @@ export interface RoutePermissionsService {
 export interface RoutesService {
   getRoutesWithRolesConfigured(): TransformedRoute[];
 }
+
+export type BootstrapMode = 'default' | 'restore' | 'soft' | 'hard';
+
+export interface PluginConfig {
+  bootstrapMode?: BootstrapMode;
+}
