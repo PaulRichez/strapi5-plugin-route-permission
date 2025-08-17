@@ -155,6 +155,8 @@ Advanced management options available in the settings:
 - Only preserves permissions explicitly managed by this plugin
 - ⚠️ **Warning**: May break other plugins or custom permissions
 
+📋 **For detailed whitelist information, see [WHITELISTS.md](./WHITELISTS.md)**
+
 #### Available Actions
 
 1. **Restore Permissions**: Synchronizes all route permissions

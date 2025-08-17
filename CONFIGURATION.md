@@ -58,6 +58,7 @@ config: {
   - Preserves Strapi native permissions (users-permissions, auth, etc.)
   - Preserves API permissions (`api::*`)
   - Syncs route permissions
+- **Whitelist**: See [WHITELISTS.md](./WHITELISTS.md) for detailed preservation rules
 
 ```typescript
 config: {
