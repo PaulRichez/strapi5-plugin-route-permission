@@ -166,7 +166,14 @@ Advanced management options available in the settings:
 
 ## 🎉 &nbsp; _Result_
 
-On strapi startup it adds only new permissions configured in your route config:
+On Strapi startup, the plugin synchronizes route permissions according to the configured bootstrap mode:
+
+- **Default mode**: Adds only new permissions, preserves existing ones
+- **Restore mode**: Recreates all route permissions from scratch
+- **Soft mode**: Cleans external permissions then syncs routes
+- **Hard mode**: Removes all external permissions then syncs routes
+
+📖 **For detailed bootstrap mode configuration, see [CONFIGURATION.md](./CONFIGURATION.md)**
 
 ![](./docs/console.png)
 
